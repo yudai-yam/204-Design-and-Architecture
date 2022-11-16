@@ -38,7 +38,7 @@ class PowerConsumer(){
 }
 
 class BiDirectionalInverter{
-    + flowControl(Source,Consumer): void
+    + flowControl(PowerSource,PowerConsumer): void
     + report(): void
 }
 
