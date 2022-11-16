@@ -1,0 +1,73 @@
+@startuml Power Manager
+
+class System{
+    + divertEnergy(): void
+}
+
+class ControlInterface{
+    + consumedPower(): void
+    + consumedGridPower(): void
+    + generatedRenewablePower(): void
+    + chargedBatteryPower(): void
+    + consumedBatteryPower(): void 
+    + batteryPercentage(): void
+    + consumedHeatingPower(): void
+    + controlAppliance(): void
+    + controlHeating(): void
+}
+
+class RenewableEnergy{
+    - solarPower
+    - windPower
+    - totalPower
+}
+
+class Battery{
+    - percentaeg: int
+
+    + charge(RenewableEnergy): void
+    + isFullyCharged(): boolean
+}
+
+class PowerSource(){
+
+}
+
+class PowerConsumer(){
+
+}
+
+class BiDirectionalInverter{
+    + flowControl(Source,Consumer): void
+    + report(): void
+}
+
+class CloudAPI{
+
+}
+
+class ImmersionWaterHeater{
+
+}
+
+class Heating{
+    - isON: boolean
+}
+
+class Appliance{
+    - isON: boolean
+}
+
+class ElectricKettle{
+
+}
+
+System -- ControlInterface
+System -- Battery
+System -- BiDirectionalInverter
+BiDirectionalInverter -- CloudAPI
+System -r- Heating
+System -l- ImmersionWaterHeater
+Appliance -- System
+ElectricKettle -- Appliance :include
+@enduml
