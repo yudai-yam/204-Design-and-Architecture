@@ -14,18 +14,28 @@ class ControlInterface{
     + consumedHeatingPower(): void
     + controlAppliance(): void
     + controlHeating(): void
+    + heatingEnergyConsumption(): void
+    + viewReport(): void
 }
 
-class RenewableEnergy{
-    - solarPower
-    - windPower
-    - totalPower
+
+interface RenewableEnergy{
+
 }
+
+class SolarPower{
+
+}
+
+class WindPower{
+
+}
+
 
 class Battery{
     - percentaeg: int
 
-    + charge(RenewableEnergy): void
+    + charge(): void
     + isFullyCharged(): boolean
 }
 
@@ -38,7 +48,7 @@ class PowerConsumer(){
 }
 
 class BiDirectionalInverter{
-    + flowControl(PowerSource,PowerConsumer): void
+    + flowControl(): void
     + report(): void
 }
 
@@ -62,12 +72,48 @@ class ElectricKettle{
 
 }
 
+
+
+interface ReportGenerator{
+    + generateReport(): Report
+}
+
+class EcoReport {
+    + generateReport(): Report
+}
+
+class OverallConsumptionReport{
+    + generateReport(): Report
+}
+
+class NonEcoReport {
+    + generateReport(): Report
+}
+
+class UsageReport{
+    + generateReport(): Report
+}
+ 
+
+
 System -- ControlInterface
 System -- Battery
 System -- BiDirectionalInverter
+Battery <|-- RenewableEnergy
+
+RenewableEnergy <|.. SolarPower
+RenewableEnergy <|.. WindPower
+
 BiDirectionalInverter -- CloudAPI
 System -r- Heating
 System -l- ImmersionWaterHeater
 Appliance -- System
 ElectricKettle -- Appliance :include
+
+ReportGenerator <|.. EcoReport
+ReportGenerator <|.. NonEcoReport
+ReportGenerator <|.. OverallConsumptionReport
+ReportGenerator <|.. UsageReport
+
+
 @enduml
