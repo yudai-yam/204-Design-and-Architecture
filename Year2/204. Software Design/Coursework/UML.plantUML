@@ -12,10 +12,11 @@ class ControlInterface{
     + consumedBatteryPower(): void 
     + batteryPercentage(): void
     + consumedHeatingPower(): void
-    + controlAppliance(): void
-    + controlHeating(): void
-    + heatingEnergyConsumption(): void
     + viewReport(): void
+}
+
+class PowerGridEnergy{
+
 }
 
 
@@ -33,21 +34,22 @@ class WindPower{
 
 
 class Battery{
-    - percentaeg: int
+    - percentage: int
+    - isON: boolean
 
     + charge(): void
-    + isFullyCharged(): boolean
+    + devertExcessPower(): void
 }
 
-class PowerSource(){
-
-}
-
-class PowerConsumer(){
+interface PowerSource{
 
 }
 
-class BiDirectionalInverter{
+interface PowerConsumer{
+    + isON: boolean
+}
+
+class Inverter{
     + flowControl(): void
     + report(): void
 }
@@ -57,19 +59,19 @@ class CloudAPI{
 }
 
 class ImmersionWaterHeater{
-
+    - isON: boolean
 }
 
 class Heating{
     - isON: boolean
 }
 
-class Appliance{
+interface Appliance{
     - isON: boolean
 }
 
 class ElectricKettle{
-
+    - isON: boolean
 }
 
 
@@ -93,27 +95,62 @@ class NonEcoReport {
 class UsageReport{
     + generateReport(): Report
 }
+
+
+interface Switch{
+    + turnOn(): void
+    + turnOff(): void
+}
+
+class HeatingController{
+
+}
+
+class ImmersionWaterHeaterController{
+
+}
+
+class ApplianceController{
+
+}
  
 
 
 System -- ControlInterface
-System -- Battery
-System -- BiDirectionalInverter
+System -- Inverter
+
 Battery <|-- RenewableEnergy
+Battery <|-- PowerGridEnergy
 
 RenewableEnergy <|.. SolarPower
 RenewableEnergy <|.. WindPower
 
-BiDirectionalInverter -- CloudAPI
-System -r- Heating
-System -l- ImmersionWaterHeater
-Appliance -- System
-ElectricKettle -- Appliance :include
+Appliance <|.. ElectricKettle
+
+PowerSource <|.. Battery
+
+PowerConsumer <|.. Battery
+PowerConsumer <|.. Appliance
+PowerConsumer <|.. ImmersionWaterHeater
+PowerConsumer <|.. Heating
+
+
+Inverter -- CloudAPI
+Inverter <|.. PowerSource
+Inverter <|.. PowerConsumer
+
 
 ReportGenerator <|.. EcoReport
 ReportGenerator <|.. NonEcoReport
 ReportGenerator <|.. OverallConsumptionReport
 ReportGenerator <|.. UsageReport
+
+Switch <|.. HeatingController
+Switch <|.. ImmersionWaterHeaterController
+Switch <|.. ApplianceController
+
+ControlInterface -- Switch
+ControlInterface -- ReportGenerator
 
 
 @enduml
