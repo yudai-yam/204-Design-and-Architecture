@@ -1,22 +1,21 @@
 @startuml Power Manager
 
-class System{
-    + divertEnergy(): void
-}
 
 class ControlInterface{
-    + consumedPower(): void
+    + getConsumption(): void
     + consumedGridPower(): void
     + generatedRenewablePower(): void
+
     + chargedBatteryPower(): void
-    + consumedBatteryPower(): void 
+    + consumedBatteryPower(): void
     + batteryPercentage(): void
-    + consumedHeatingPower(): void
-    + viewReport(): void
+
+    /'+ heatingControl(): void
+    + applianceControl(): void'/
 }
 
 class PowerGridEnergy{
-
+    
 }
 
 
@@ -35,18 +34,17 @@ class WindPower{
 
 class Battery{
     - percentage: int
-    - isON: boolean
 
     + charge(): void
     + devertExcessPower(): void
 }
 
 interface PowerSource{
-
+    - consumedPower: int
 }
 
 interface PowerConsumer{
-    + isON: boolean
+    - consumption: double
 }
 
 class Inverter{
@@ -58,20 +56,24 @@ class CloudAPI{
 
 }
 
-class ImmersionWaterHeater{
-    - isON: boolean
+interface Household{
+  - isON: boolean
 }
 
-class Heating{
-    - isON: boolean
+class ImmersionWaterHeater{
+}
+
+interface Heating{
 }
 
 interface Appliance{
-    - isON: boolean
 }
 
 class ElectricKettle{
-    - isON: boolean
+}
+
+class ElectricHeater{
+
 }
 
 
@@ -97,12 +99,12 @@ class UsageReport{
 }
 
 
-interface Switch{
+class Controller{
     + turnOn(): void
     + turnOff(): void
-}
+} 
 
-class HeatingController{
+/' class HeatingController{
 
 }
 
@@ -112,15 +114,14 @@ class ImmersionWaterHeaterController{
 
 class ApplianceController{
 
-}
+} '/
  
 
 
-System -- ControlInterface
-System -- Inverter
+ControlInterface "1"--"1" Inverter
 
 Battery <|-- RenewableEnergy
-Battery <|-- PowerGridEnergy
+PowerSource <|.. PowerGridEnergy
 
 RenewableEnergy <|.. SolarPower
 RenewableEnergy <|.. WindPower
@@ -130,14 +131,11 @@ Appliance <|.. ElectricKettle
 PowerSource <|.. Battery
 
 PowerConsumer <|.. Battery
-PowerConsumer <|.. Appliance
-PowerConsumer <|.. ImmersionWaterHeater
-PowerConsumer <|.. Heating
 
 
-Inverter -- CloudAPI
-Inverter <|.. PowerSource
-Inverter <|.. PowerConsumer
+Inverter "1"--"1" CloudAPI
+Inverter "1"--"1..*" PowerSource
+Inverter "1"--"1..*" PowerConsumer
 
 
 ReportGenerator <|.. EcoReport
@@ -145,12 +143,19 @@ ReportGenerator <|.. NonEcoReport
 ReportGenerator <|.. OverallConsumptionReport
 ReportGenerator <|.. UsageReport
 
-Switch <|.. HeatingController
-Switch <|.. ImmersionWaterHeaterController
-Switch <|.. ApplianceController
+Controller "1"--"1..*" Heating
+Controller "1"--"1..*" Appliance
 
-ControlInterface -- Switch
-ControlInterface -- ReportGenerator
 
+ControlInterface "1"--"1" ReportGenerator
+
+Household <|.. Heating
+Household <|.. Appliance
+
+Heating <|.. ImmersionWaterHeater
+Heating <|.. ElectricHeater
+
+
+PowerConsumer <|.. Household
 
 @enduml
