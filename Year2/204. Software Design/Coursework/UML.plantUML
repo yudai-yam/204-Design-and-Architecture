@@ -1,10 +1,8 @@
 @startuml Power Manager
 
-
 class PowerGrid{
     
 }
-
 
 interface RenewableEnergy{
     + chargeImmersionHeater(): void
@@ -18,6 +16,10 @@ class WindPower{
 
 }
 
+class SystemApplication{
+    + showReport(): void
+}
+
 
 class Battery{
     - percentage: int
@@ -25,15 +27,18 @@ class Battery{
     - leavingPower: double
     - isFull: bool
 
-    + charge(): void
 }
 
 interface PowerSource{
-    - consumedPower: int
+    - consumedPower: double
+
+    + consume(): void
 }
 
 interface PowerConsumer{
     - consumption: double
+
+    + charge(): void
 }
 
 class Inverter{
@@ -41,11 +46,11 @@ class Inverter{
     + report(): void
 }
 
-class CloudAPI{
+interface CloudAPI{
 
 }
 
-interface Household{
+interface HouseholdAppliance{
   - isON: boolean
 }
 
@@ -53,10 +58,10 @@ class ImmersionHeater{
 }
 
 interface Heating{
+    + heat(): void
 }
 
-interface Appliance{
-}
+
 
 class ElectricKettle{
 }
@@ -80,13 +85,13 @@ class Controller{
 
 
 
-Battery <-- RenewableEnergy
+Battery --> RenewableEnergy
 PowerSource <|.. PowerGrid
 
 RenewableEnergy <|.. SolarPower
 RenewableEnergy <|.. WindPower
 
-Appliance <|.. ElectricKettle
+HouseholdAppliance <|-- ElectricKettle
 
 PowerSource <|.. Battery
 
@@ -98,15 +103,14 @@ Inverter "1"--"1..*" PowerSource
 Inverter "1"--"1..*" PowerConsumer
 
 
-ReportGenerator <-- RenewableEnergy
-ReportGenerator <-- PowerGrid
-ReportGenerator <-- PowerConsumer
+ReportGenerator "0..1"--"1" RenewableEnergy
+ReportGenerator "0..1"--"1" PowerGrid
+ReportGenerator "0..1"--"1" PowerConsumer
 
-Controller <-- Household
+Controller --> HouseholdAppliance
 
 
-Household <|-- Heating
-Household <|-- Appliance
+HouseholdAppliance <|-- Heating
 
 Heating <|.. ImmersionHeater
 Heating <|.. ElectricHeater
@@ -116,4 +120,7 @@ RenewableEnergy "1"--"1" ImmersionHeater
 
 PowerConsumer <|-- Household
 
+SystemApplication --|> ReportGenerator
+SystemApplication --|> Controller
+SystemApplication "1"--"1" CloudAPI
 @enduml
