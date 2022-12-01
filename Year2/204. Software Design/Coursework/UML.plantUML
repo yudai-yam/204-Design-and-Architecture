@@ -1,26 +1,13 @@
 @startuml Power Manager
 
 
-class ControlInterface{
-    + getConsumption(): void
-    + consumedGridPower(): void
-    + generatedRenewablePower(): void
-
-    + chargedBatteryPower(): void
-    + consumedBatteryPower(): void
-    + batteryPercentage(): void
-
-    /'+ heatingControl(): void
-    + applianceControl(): void'/
-}
-
-class PowerGridEnergy{
+class PowerGrid{
     
 }
 
 
 interface RenewableEnergy{
-
+    + chargeImmersionHeater(): void
 }
 
 class SolarPower{
@@ -34,9 +21,11 @@ class WindPower{
 
 class Battery{
     - percentage: int
+    - enteringPower: double
+    - leavingPower: double
+    - isFull: bool
 
     + charge(): void
-    + devertExcessPower(): void
 }
 
 interface PowerSource{
@@ -60,7 +49,7 @@ interface Household{
   - isON: boolean
 }
 
-class ImmersionWaterHeater{
+class ImmersionHeater{
 }
 
 interface Heating{
@@ -78,25 +67,10 @@ class ElectricHeater{
 
 
 
-interface ReportGenerator{
+class ReportGenerator{
     + generateReport(): Report
 }
 
-class EcoReport {
-    + generateReport(): Report
-}
-
-class OverallConsumptionReport{
-    + generateReport(): Report
-}
-
-class NonEcoReport {
-    + generateReport(): Report
-}
-
-class UsageReport{
-    + generateReport(): Report
-}
 
 
 class Controller{
@@ -104,24 +78,10 @@ class Controller{
     + turnOff(): void
 } 
 
-/' class HeatingController{
-
-}
-
-class ImmersionWaterHeaterController{
-
-}
-
-class ApplianceController{
-
-} '/
- 
 
 
-ControlInterface "1"--"1" Inverter
-
-Battery <|-- RenewableEnergy
-PowerSource <|.. PowerGridEnergy
+Battery <-- RenewableEnergy
+PowerSource <|.. PowerGrid
 
 RenewableEnergy <|.. SolarPower
 RenewableEnergy <|.. WindPower
@@ -138,24 +98,22 @@ Inverter "1"--"1..*" PowerSource
 Inverter "1"--"1..*" PowerConsumer
 
 
-ReportGenerator <|.. EcoReport
-ReportGenerator <|.. NonEcoReport
-ReportGenerator <|.. OverallConsumptionReport
-ReportGenerator <|.. UsageReport
+ReportGenerator <-- RenewableEnergy
+ReportGenerator <-- PowerGrid
+ReportGenerator <-- PowerConsumer
 
-Controller "1"--"1..*" Heating
-Controller "1"--"1..*" Appliance
+Controller <-- Household
 
 
-ControlInterface "1"--"1" ReportGenerator
+Household <|-- Heating
+Household <|-- Appliance
 
-Household <|.. Heating
-Household <|.. Appliance
-
-Heating <|.. ImmersionWaterHeater
+Heating <|.. ImmersionHeater
 Heating <|.. ElectricHeater
 
+RenewableEnergy "1"--"1" ImmersionHeater
 
-PowerConsumer <|.. Household
+
+PowerConsumer <|-- Household
 
 @enduml
