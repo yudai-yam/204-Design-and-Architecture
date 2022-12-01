@@ -1,11 +1,19 @@
 @startuml Power Manager
 
+class SystemApplication{
+    + showReport(): void
+}
+
+
+
 class PowerGrid{
     
 }
 
+
 interface RenewableEnergy{
     + chargeImmersionHeater(): void
+    + checkBatteryStatus(): boolean
 }
 
 class SolarPower{
@@ -16,9 +24,6 @@ class WindPower{
 
 }
 
-class SystemApplication{
-    + showReport(): void
-}
 
 
 class Battery{
@@ -87,15 +92,17 @@ class Controller{
 
 Battery --> RenewableEnergy
 PowerSource <|.. PowerGrid
+PowerSource <|.. Battery
+PowerConsumer <|.. Battery
+PowerConsumer <|.. PowerGrid
+PowerConsumer <|-- HouseholdAppliance
 
 RenewableEnergy <|.. SolarPower
 RenewableEnergy <|.. WindPower
 
 HouseholdAppliance <|-- ElectricKettle
 
-PowerSource <|.. Battery
 
-PowerConsumer <|.. Battery
 
 
 Inverter "1"--"1" CloudAPI
@@ -118,7 +125,6 @@ Heating <|.. ElectricHeater
 RenewableEnergy "1"--"1" ImmersionHeater
 
 
-PowerConsumer <|-- Household
 
 SystemApplication --|> ReportGenerator
 SystemApplication --|> Controller
