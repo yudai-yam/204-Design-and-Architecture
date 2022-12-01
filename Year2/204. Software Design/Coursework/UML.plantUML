@@ -55,14 +55,14 @@ interface CloudAPI{
 
 }
 
-interface HouseholdAppliance{
+abstract class HouseholdAppliance{
   - isON: boolean
 }
 
 class ImmersionHeater{
 }
 
-interface Heating{
+abstract class Heating{
     + heat(): void
 }
 
@@ -95,7 +95,7 @@ PowerSource <|.. PowerGrid
 PowerSource <|.. Battery
 PowerConsumer <|.. Battery
 PowerConsumer <|.. PowerGrid
-PowerConsumer <|-- HouseholdAppliance
+PowerConsumer <|.. HouseholdAppliance
 
 RenewableEnergy <|.. SolarPower
 RenewableEnergy <|.. WindPower
@@ -119,8 +119,8 @@ Controller --> HouseholdAppliance
 
 HouseholdAppliance <|-- Heating
 
-Heating <|.. ImmersionHeater
-Heating <|.. ElectricHeater
+Heating <|-- ImmersionHeater
+Heating <|-- ElectricHeater
 
 RenewableEnergy "1"--"1" ImmersionHeater
 
